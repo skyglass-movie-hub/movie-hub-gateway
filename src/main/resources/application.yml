@@ -56,7 +56,7 @@ spring:
         - id: spa-route
           uri: ${SPA_URL:http://localhost:9004}
           predicates:
-            - Path=/,/*.css,/*.js,/favicon.ico,/static/**
+            - Path=/,/*.css,/*.js,/favicon.ico,/static/css/*.css,/static/js/*.js,/manifest.json
         - id: movie-route
           uri: ${MOVIES_API_URL:http://localhost:9001}/movies
           predicates:
