@@ -68,7 +68,7 @@ public class SecurityConfig {
 		return oidcLogoutSuccessHandler;
 	}
 
-	@Bean
+	/*@Bean
 	WebFilter csrfWebFilter() {
 		// Required because of https://github.com/spring-projects/spring-security/issues/5766
 		return (exchange, chain) -> {
@@ -78,6 +78,19 @@ public class SecurityConfig {
 			}));
 			return chain.filter(exchange);
 		};
+	}*/
+
+	@Bean
+	WebFilter csrfCookieWebFilter() {
+		return (exchange, chain) -> {
+			Mono<CsrfToken> csrfToken = exchange.getAttributeOrDefault(CsrfToken.class.getName(), Mono.empty());
+			return csrfToken.doOnSuccess(token -> {
+				/* Ensures the token is subscribed to. */
+			}).then(chain.filter(exchange));
+		};
 	}
+
+
+
 
 }
