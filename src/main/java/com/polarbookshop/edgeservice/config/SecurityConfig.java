@@ -48,7 +48,8 @@ public class SecurityConfig {
 		return http
 				.authorizeExchange(exchange -> exchange
 						.pathMatchers("/actuator/**", "/books/actuator/**").permitAll()
-						.pathMatchers("/", "/*.css", "/*.js", "/favicon.ico").permitAll()
+						.pathMatchers("/", "/*.css", "/*.js", "/favicon.ico", "/static/js/*.js",
+								"/static/css/*.css", "/manifest.json").permitAll()
 						.pathMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs", "/v3/api-docs/**",
 								"/openapi/**", "/webjars/**", "/oauth2/**", "/login/**", "/error/**").permitAll()
 						.pathMatchers(HttpMethod.GET, "/movies/**").permitAll()
@@ -58,8 +59,7 @@ public class SecurityConfig {
 						.authenticationEntryPoint(new HttpStatusServerEntryPoint(HttpStatus.UNAUTHORIZED)))
 				.oauth2Login(Customizer.withDefaults())
 				.logout(logout -> logout.logoutSuccessHandler(oidcLogoutSuccessHandler(clientRegistrationRepository)))
-				//.csrf(csrf -> csrf.csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse()))
-				.cors().and().csrf().disable()
+				.csrf(csrf -> csrf.csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse()))
 				.build();
 	}
 
@@ -69,7 +69,7 @@ public class SecurityConfig {
 		return oidcLogoutSuccessHandler;
 	}
 
-	/*@Bean
+	@Bean
 	WebFilter csrfWebFilter() {
 		// Required because of https://github.com/spring-projects/spring-security/issues/5766
 		return (exchange, chain) -> {
@@ -79,17 +79,17 @@ public class SecurityConfig {
 			}));
 			return chain.filter(exchange);
 		};
-	}*/
+	}
 
-	@Bean
+	/* @Bean
 	WebFilter csrfCookieWebFilter() {
 		return (exchange, chain) -> {
 			Mono<CsrfToken> csrfToken = exchange.getAttributeOrDefault(CsrfToken.class.getName(), Mono.empty());
 			return csrfToken.doOnSuccess(token -> {
-				/* Ensures the token is subscribed to. */
+				// Ensures the token is subscribed to.
 			}).then(chain.filter(exchange));
 		};
-	}
+	} */
 
 
 
